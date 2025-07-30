@@ -1,6 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://hpewmm5q6vx"]
+[gd_scene load_steps=4 format=3 uid="uid://hpewmm5q6vx"]
 
 [ext_resource type="Script" uid="uid://dghhwhugu5ecp" path="res://scenes/level.gd" id="1_2q6dc"]
+[ext_resource type="PackedScene" uid="uid://jjl5ordimcp4" path="res://objects/slot_machine.tscn" id="2_w8frs"]
+[ext_resource type="PackedScene" uid="uid://yuuhuoojdr0t" path="res://objects/world_map.tscn" id="3_mx8sn"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_2q6dc")
+
+[node name="SlotMachine" parent="." instance=ExtResource("2_w8frs")]
+
+[node name="WorldMap" parent="." instance=ExtResource("3_mx8sn")]
+position = Vector2(828, 157)
+
+[node name="RollButton" type="Button" parent="."]
+offset_left = 442.0
+offset_top = 907.0
+offset_right = 479.0
+offset_bottom = 938.0
+text = "Roll"
+
+[node name="SubmitButton" type="Button" parent="."]
+offset_left = 446.0
+offset_top = 955.0
+offset_right = 509.0
+offset_bottom = 986.0
+text = "Submit"

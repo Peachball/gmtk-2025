@@ -1,7 +1,5 @@
 extends Node2D
 
-
-
 var points := 0
 
 enum {
@@ -12,4 +10,4 @@ enum {
 var player_action := SLOT_MACHINE
 
 func _ready() -> void:
-	print('hi')
+	pass
