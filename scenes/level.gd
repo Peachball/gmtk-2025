@@ -1,6 +1,7 @@
 extends Node2D
 
 var points := 0
+var rolled := true
 
 enum {
 	SLOT_MACHINE_PREROLL,
@@ -15,7 +16,9 @@ var player_action :int:
 				$StateLabel.text = "Roll"
 			SLOT_MACHINE_EDIT:
 				$StateLabel.text = "Rotate the pieces!"
+				$RollSubmitButton.text = "Submit"
 			PLACE_TILE:
+				$RollSubmitButton.text = "Roll"
 				$StateLabel.text = "Place the piece!"
 		player_action = new_action
 var player_position := Vector2i(0, 0)
@@ -23,10 +26,14 @@ var player_position := Vector2i(0, 0)
 func _ready() -> void:
 	$WorldMap.set_player_position(player_position)
 	player_action = SLOT_MACHINE_PREROLL
+	rolled = true
 
 
-func _on_roll_button_pressed() -> void:
-	player_action = SLOT_MACHINE_EDIT
-
-func _on_submit_button_pressed() -> void:
-	player_action = PLACE_TILE
+func _on_roll_submit_button_pressed() -> void:
+	if rolled:
+		player_action = PLACE_TILE
+		rolled = !rolled
+	else:
+		player_action = SLOT_MACHINE_EDIT
+		$SlotMachine.reroll()
+		rolled = !rolled

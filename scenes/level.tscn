@@ -9,23 +9,16 @@ script = ExtResource("1_2q6dc")
 metadata/_edit_lock_ = true
 
 [node name="SlotMachine" parent="." instance=ExtResource("2_w8frs")]
+position = Vector2(383, 370)
 
 [node name="WorldMap" parent="." instance=ExtResource("3_mx8sn")]
 position = Vector2(1122, 199)
 
-[node name="RollButton" type="Button" parent="."]
+[node name="RollSubmitButton" type="Button" parent="."]
 offset_left = 442.0
 offset_top = 907.0
 offset_right = 479.0
 offset_bottom = 938.0
-text = "Roll"
-metadata/_edit_lock_ = true
-
-[node name="SubmitButton" type="Button" parent="."]
-offset_left = 446.0
-offset_top = 955.0
-offset_right = 509.0
-offset_bottom = 986.0
 text = "Submit"
 metadata/_edit_lock_ = true
 
@@ -46,5 +39,4 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 60
 text = "Roll"
 
-[connection signal="pressed" from="RollButton" to="." method="_on_roll_button_pressed"]
-[connection signal="pressed" from="SubmitButton" to="." method="_on_submit_button_pressed"]
+[connection signal="pressed" from="RollSubmitButton" to="." method="_on_roll_submit_button_pressed"]

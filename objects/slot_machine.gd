@@ -9,9 +9,9 @@ const MACHINE_HEIGHT := 5
 @export var tile_spacing := 5
 	
 func _ready() -> void:
-	spawn_tiles()
+	reroll()
 	
-func spawn_tiles() -> void:
+func reroll() -> void:
 	for row in MACHINE_HEIGHT:
 		for col in MACHINE_WIDTH:
 			var tile := tile_scene.instantiate()
