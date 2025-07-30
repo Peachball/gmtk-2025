@@ -7,6 +7,7 @@ var mid := Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH / 2)
 var end := Vector2(Constant.TILE_WIDTH - inset, Constant.TILE_WIDTH / 2)
 var line_thickness := 3
 var inset := 2
+var allow_rotate := true
 
 func _ready() -> void:
 	start = Vector2(inset, Constant.TILE_WIDTH / 2)
@@ -45,9 +46,9 @@ func rotate_tile() -> void:
 	queue_redraw()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton and event.pressed and allow_rotate:
 		var local_mouse_pos = to_local(event.position)
 		var tile_rect = Rect2(Vector2.ZERO, Vector2(Constant.TILE_WIDTH, Constant.TILE_WIDTH))
-		
+
 		if tile_rect.has_point(local_mouse_pos):
 			rotate_tile()

@@ -28,6 +28,9 @@ func _ready() -> void:
 	player_action = SLOT_MACHINE_PREROLL
 	rolled = true
 
+func _process(delta: float) -> void:
+	if $HeldTiles.get_child_count() != 0:
+		$HeldTiles.position = get_viewport().get_mouse_position()
 
 func _on_roll_submit_button_pressed() -> void:
 	if rolled:

@@ -21,4 +21,4 @@ func reroll() -> void:
 			var pos_y := row * (tile_size + tile_spacing)
 			
 			tile.position = Vector2(pos_x, pos_y)
-			add_child(tile)
+			$Tiles.add_child(tile)
