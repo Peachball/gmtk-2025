@@ -6,7 +6,7 @@ var level_width := 5
 var level_height := 5
 
 func _ready() -> void:
-	set_player_position(2, 2)
+	pass
 
 func _draw() -> void:
 	# draw grid lines
@@ -15,15 +15,18 @@ func _draw() -> void:
 			Vector2(0, r * Constant.TILE_WIDTH),
 			Vector2((level_height) * Constant.TILE_WIDTH, r * Constant.TILE_WIDTH),
 			Color.BLACK,
-			1.0
+			Constant.LINE_THICKNESS,
+			true
 		)
 	for c in range(0, level_height + 1):
 		draw_line(
 			Vector2(c * Constant.TILE_WIDTH, 0),
 			Vector2(c * Constant.TILE_WIDTH, (level_width) * Constant.TILE_WIDTH),
 			Color.BLACK,
-			1.0
+			Constant.LINE_THICKNESS,
+			true
 		)
 
-func set_player_position(x: int, y: int) -> void:
-	$Player.position = Vector2((x + 0.5) * Constant.TILE_WIDTH, (level_height - y - .5) * Constant.TILE_WIDTH)
+func set_player_position(position: Vector2i) -> void:
+	$Player.position = Vector2((position.x + 0.5) * Constant.TILE_WIDTH,
+		(level_height - position.y - .5) * Constant.TILE_WIDTH)
