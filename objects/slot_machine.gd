@@ -2,8 +2,8 @@ extends Node2D
 
 class_name SlotMachine
 
-const MACHINE_WIDTH := 3
-const MACHINE_HEIGHT := 3
+const MACHINE_WIDTH := 5
+const MACHINE_HEIGHT := 5
 
 @export var tile_scene: PackedScene
 @export var tile_spacing := 5
