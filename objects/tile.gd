@@ -38,12 +38,25 @@ func _draw() -> void:
 	draw_line(mid, end, black, line_thickness)
 	
 func rotate_tile() -> void:
+	allow_rotate = false
+
 	var angle := deg_to_rad(90)
+	var start_offset = start - mid
+	var end_offset = end - mid
 	
-	start = (start - mid).rotated(angle) + mid
-	end = (end - mid).rotated(angle) + mid
+	var tween := create_tween()
 	
-	queue_redraw()
+	tween.tween_method(
+		func(t: float):
+			start = start_offset.rotated(t * angle) + mid
+			end = end_offset.rotated(t * angle) + mid
+			queue_redraw()
+	, 0.0, 1.0, 0.3)
+	
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	
+	tween.tween_callback(func(): allow_rotate = true)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and allow_rotate:
