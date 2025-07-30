@@ -34,6 +34,10 @@ func _process(delta: float) -> void:
 
 func _on_roll_submit_button_pressed() -> void:
 	if rolled:
+		var tiles = $SlotMachine/Tiles.duplicate()
+		for tile in tiles.get_children():
+			(tile as Tile).allow_rotate = false
+		$HeldTiles.add_child(tiles)
 		player_action = PLACE_TILE
 		rolled = !rolled
 	else:
