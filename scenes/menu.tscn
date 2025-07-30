@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://dwutmvi0xmdhd"]
 
 [node name="Menu" type="Node2D"]
-position = Vector2(1041, 960)
+metadata/_edit_lock_ = true
 
 [node name="PlayButton" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
-text = "Playg"
+offset_left = 985.0
+offset_top = 902.0
+offset_right = 1026.0
+offset_bottom = 933.0
+text = "Play"
 metadata/_edit_use_anchors_ = true
