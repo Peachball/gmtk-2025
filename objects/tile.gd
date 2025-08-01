@@ -9,13 +9,29 @@ var line_thickness := 3
 var inset := 2
 var allow_rotate := true
 
-func _ready() -> void:
-	start = Vector2(inset, Constant.TILE_WIDTH / 2)
-	mid = Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH / 2)
+var start_direction: int = Constant.Direction.LEFT
+var end_direction: int = Constant.Direction.RIGHT
+var grid_position: Vector2i
+
+func init_random_direction() -> void:
+	start_direction = Constant.Direction.LEFT
+	
 	var rand = randi() % 2
 	if rand == 1:
-		end = Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH - inset)
+		end_direction = Constant.Direction.DOWN
+	else:
+		end_direction = Constant.Direction.RIGHT
+	init_from_directions(start_direction, end_direction)
 	
+func init_from_directions(new_start_direction: int, new_end_direction: int) -> void:
+	start_direction = new_start_direction
+	end_direction = new_end_direction
+	Constant.direction_to_vector(start_direction)
+	start = calculate_inset_vector(start_direction)
+	end = calculate_inset_vector(end_direction)
+	
+func calculate_inset_vector(direction: int) -> Vector2:
+	return mid + Constant.direction_to_vector(direction) * (Constant.TILE_WIDTH / 2 - inset)
 
 func _draw() -> void:
 	# draw box
@@ -44,6 +60,9 @@ func rotate_tile() -> void:
 	var start_offset = start - mid
 	var end_offset = end - mid
 	
+	start_direction = (start_direction + 1) % 4
+	end_direction = (end_direction + 1) % 4
+	
 	var tween := create_tween()
 	
 	tween.tween_method(
@@ -58,7 +77,7 @@ func rotate_tile() -> void:
 	
 	tween.tween_callback(func(): allow_rotate = true)
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and allow_rotate:
 		var local_mouse_pos = to_local(event.position)
 		var tile_rect = Rect2(Vector2.ZERO, Vector2(Constant.TILE_WIDTH, Constant.TILE_WIDTH))
