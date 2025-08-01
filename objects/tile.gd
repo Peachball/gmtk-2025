@@ -142,6 +142,13 @@ func rotate_tile() -> void:
 	tween.set_ease(Tween.EASE_IN_OUT)
 	
 	tween.tween_callback(func(): allow_rotate = true)
+	
+func get_exit_direction(entry_direction: int) -> int:
+	if entry_direction == start_direction:
+		return end_direction
+	elif entry_direction == end_direction:
+		return start_direction
+	return -1
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and allow_rotate:
