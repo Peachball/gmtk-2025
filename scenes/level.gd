@@ -39,12 +39,13 @@ func process_place_tile() -> void:
 	$HeldTiles.position = mouse_pos - Vector2((Constant.TILE_WIDTH * $SlotMachine.MACHINE_HEIGHT) / 2, (Constant.TILE_WIDTH * $SlotMachine.MACHINE_WIDTH) / 2)
 	
 	if Input.is_action_just_pressed("ui_cancel"):
-		for child in $HeldTiles.get_children():
-			$HeldTiles.remove_child(child)
-			child.queue_free()
+		clear_held_tiles()
 		player_action = SLOT_MACHINE_EDIT
 		return
 	highlight_path()
+	
+func clear_held_tiles():
+	Constant.clear_children($HeldTiles)
 
 func highlight_path() -> void:
 	var grid_map: Dictionary[Vector2i, Tile] = {}
@@ -89,6 +90,7 @@ func _on_roll_submit_button_pressed() -> void:
 		SLOT_MACHINE_EDIT:
 			var tile_inst = preload("res://objects/tile.tscn")
 			var tiles = $SlotMachine/Tiles
+			clear_held_tiles()
 			for tile in tiles.get_children():
 				var casted_tile = tile as Tile
 				var new_tile := tile_inst.instantiate()
@@ -96,6 +98,7 @@ func _on_roll_submit_button_pressed() -> void:
 				new_tile.init_from_directions(casted_tile.start_direction, casted_tile.end_direction)
 				new_tile.position = casted_tile.position
 				new_tile.grid_position = casted_tile.grid_position
+				new_tile.out_of_focus = true
 				$HeldTiles.add_child(new_tile)
 			player_action = PLACE_TILE
 			rolled = !rolled

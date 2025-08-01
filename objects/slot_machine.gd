@@ -13,6 +13,7 @@ func _ready() -> void:
 	reroll()
 	
 func reroll() -> void:
+	Constant.clear_children($Tiles)
 	for row in MACHINE_HEIGHT:
 		for col in MACHINE_WIDTH:
 			var tile := tile_scene.instantiate() as Tile
