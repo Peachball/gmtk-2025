@@ -14,7 +14,13 @@ var end_direction: int = Constant.Direction.RIGHT
 var grid_position: Vector2i
 var highlight_start: bool = false
 var highlight_end: bool = false
-var out_of_focus: bool = false
+var out_of_focus: bool:
+	set(value):
+		out_of_focus = value
+		queue_redraw()
+
+func _init():
+	out_of_focus = false
 
 var debug_box: PackedVector2Array = PackedVector2Array()
 
