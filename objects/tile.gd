@@ -18,15 +18,20 @@ var highlight_end: bool = false
 var debug_box: PackedVector2Array = PackedVector2Array()
 
 func init_random_direction() -> void:
-	start_direction = Constant.Direction.LEFT
-	
-	var rand = randi() % 2
-	if rand == 1:
-		end_direction = Constant.Direction.DOWN
-	else:
-		end_direction = Constant.Direction.RIGHT
+	var directions := [Constant.Direction.UP, Constant.Direction.RIGHT, Constant.Direction.DOWN, Constant.Direction.LEFT]
+
+	# Pick random start direction
+	start_direction = directions[randi() % directions.size()]
+
+	# Remove start_direction from the list to avoid duplication
+	var remaining_directions = directions.duplicate()
+	remaining_directions.erase(start_direction)
+
+	# Pick random end direction from the remaining ones
+	end_direction = remaining_directions[randi() % remaining_directions.size()]
+
 	init_from_directions(start_direction, end_direction)
-	
+
 func init_from_directions(new_start_direction: int, new_end_direction: int) -> void:
 	start_direction = new_start_direction
 	end_direction = new_end_direction
