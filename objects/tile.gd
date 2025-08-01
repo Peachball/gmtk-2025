@@ -14,6 +14,7 @@ var end_direction: int = Constant.Direction.RIGHT
 var grid_position: Vector2i
 var highlight_start: bool = false
 var highlight_end: bool = false
+var out_of_focus: bool = false
 
 var debug_box: PackedVector2Array = PackedVector2Array()
 
@@ -103,6 +104,9 @@ func _draw() -> void:
 	
 	var black = Color(0, 0, 0)
 	var white = Color(1, 1, 1)
+	if out_of_focus:
+		black = Color(0, 0, 0, 0.5)
+		white = Color(1, 1, 1, 0.5)
 	
 	draw_rect(my_rect, white, true)
 	
@@ -122,6 +126,8 @@ func draw_path(a: Vector2, b: Vector2, highlight: bool):
 	var color = Color(0, 0, 0)
 	if highlight:
 		color = Color.YELLOW
+	if out_of_focus:
+		color.a = 0.5
 	draw_line(a, b, color, line_thickness)
 	
 func rotate_tile() -> void:
