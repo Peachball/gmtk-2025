@@ -12,6 +12,10 @@ var allow_rotate := true
 var start_direction: int = Constant.Direction.LEFT
 var end_direction: int = Constant.Direction.RIGHT
 var grid_position: Vector2i
+var highlight_start: bool = false
+var highlight_end: bool = false
+
+var debug_box: PackedVector2Array = PackedVector2Array()
 
 func init_random_direction() -> void:
 	start_direction = Constant.Direction.LEFT
@@ -33,6 +37,59 @@ func init_from_directions(new_start_direction: int, new_end_direction: int) -> v
 func calculate_inset_vector(direction: int) -> Vector2:
 	return mid + Constant.direction_to_vector(direction) * (Constant.TILE_WIDTH / 2 - inset)
 
+func set_highlight_direction(direction: int, highlight_state: bool = true) -> void:
+	if start_direction == direction:
+		highlight_start = highlight_state
+	if end_direction == direction:
+		highlight_end = highlight_state
+	queue_redraw()
+	
+func clear_highlights() -> void:
+	highlight_start = false
+	highlight_end = false
+	queue_redraw()
+
+func calculate_path_direction(player_position: Vector2) -> int:
+	if start_direction == (end_direction + 2) % 4:
+		var box := PackedVector2Array([
+			Vector2(0, 0),
+			Vector2(0, Constant.TILE_WIDTH),
+			Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH),
+			Vector2(Constant.TILE_WIDTH / 2, 0)
+		])
+		var shifted_box = Transform2D(0, Vector2(Constant.TILE_WIDTH / 2, 0)) * box
+		var box_direction := Constant.Direction.LEFT
+
+		if start_direction == Constant.Direction.UP || start_direction == Constant.Direction.DOWN:
+			var rotation = Transform2D(PI/2, Vector2(Constant.TILE_WIDTH, 0))
+			box = rotation * box
+			shifted_box = rotation * shifted_box
+			box_direction = Constant.Direction.UP
+		if Geometry2D.is_point_in_polygon(to_local(player_position), box):
+			return box_direction
+		if Geometry2D.is_point_in_polygon(to_local(player_position), shifted_box):
+			return (box_direction + 2) % 4
+	else:
+		var start_direction_vector := Constant.direction_to_vector(start_direction)
+		var end_direction_vector := Constant.direction_to_vector(end_direction)
+		var directional_midpoint := start_direction_vector + end_direction_vector
+		var aligned_end := directional_midpoint * Constant.TILE_WIDTH / 2
+		var start_rotation_sign := 1.0
+		if aligned_end.angle_to(start_direction_vector) < 0:
+			start_rotation_sign = -1.0
+		var start_side := aligned_end.rotated(PI/2 * start_rotation_sign)
+		var start_triangle := PackedVector2Array([
+			-aligned_end, aligned_end, aligned_end.rotated(PI/2 * start_rotation_sign)
+		])
+		var end_triangle := Transform2D(PI, Vector2(0, 0)) * start_triangle
+		var shift := Transform2D(0, mid)
+		if Geometry2D.is_point_in_polygon(to_local(player_position), shift * start_triangle):
+			return start_direction
+		if Geometry2D.is_point_in_polygon(to_local(player_position), shift * end_triangle):
+			return end_direction
+	return -1
+
+
 func _draw() -> void:
 	# draw box
 	var rect_position = Vector2(0, 0)
@@ -42,7 +99,7 @@ func _draw() -> void:
 	var black = Color(0, 0, 0)
 	var white = Color(1, 1, 1)
 	
-	draw_rect(my_rect, white , true)
+	draw_rect(my_rect, white, true)
 	
 	# Adjust position and size to account for border thickness
 	var border_rect_position = rect_position - Vector2(line_thickness, line_thickness)
@@ -50,8 +107,17 @@ func _draw() -> void:
 	draw_rect(Rect2(border_rect_position, border_rect_size), black, false, line_thickness)
 
 	# draw path
-	draw_line(start, mid, black, line_thickness)
-	draw_line(mid, end, black, line_thickness)
+	draw_path(start, mid, highlight_start)
+	draw_path(mid, end, highlight_end)
+
+	if debug_box.size() >= 3:
+		draw_colored_polygon(debug_box, Color.RED)
+
+func draw_path(a: Vector2, b: Vector2, highlight: bool):
+	var color = Color(0, 0, 0)
+	if highlight:
+		color = Color.YELLOW
+	draw_line(a, b, color, line_thickness)
 	
 func rotate_tile() -> void:
 	allow_rotate = false

@@ -43,7 +43,21 @@ func process_place_tile() -> void:
 			child.queue_free()
 		player_action = SLOT_MACHINE_EDIT
 		return
-	
+	highlight_path()
+
+func highlight_path():
+	var grid_map: Dictionary[Vector2i, Tile] = {}
+	for child in $HeldTiles.get_children():
+		var tile := child as Tile
+		grid_map[tile.grid_position] = tile
+		tile.clear_highlights()
+
+	# Check if player position is in relevant hitbox of a grid cell
+	for grid_position in grid_map.keys():
+		var tile := grid_map[grid_position]
+		var path_direction := tile.calculate_path_direction($WorldMap/Player.global_position)
+		if path_direction != -1:
+			tile.set_highlight_direction(path_direction)
 
 func _on_roll_submit_button_pressed() -> void:
 	match player_action:
