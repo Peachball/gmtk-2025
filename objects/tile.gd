@@ -60,47 +60,10 @@ func clear_highlights() -> void:
 	highlight_start = false
 	highlight_end = false
 	queue_redraw()
-
-func calculate_path_direction(player_position: Vector2) -> int:
-	if start_direction == (end_direction + 2) % 4:
-		var box := PackedVector2Array([
-			Vector2(0, 0),
-			Vector2(0, Constant.TILE_WIDTH),
-			Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH),
-			Vector2(Constant.TILE_WIDTH / 2, 0)
-		])
-		var shifted_box = Transform2D(0, Vector2(Constant.TILE_WIDTH / 2, 0)) * box
-		var box_direction := Constant.Direction.LEFT
-
-		if start_direction == Constant.Direction.UP || start_direction == Constant.Direction.DOWN:
-			var rotation = Transform2D(PI/2, Vector2(Constant.TILE_WIDTH, 0))
-			box = rotation * box
-			shifted_box = rotation * shifted_box
-			box_direction = Constant.Direction.UP
-		if Geometry2D.is_point_in_polygon(to_local(player_position), box):
-			return box_direction
-		if Geometry2D.is_point_in_polygon(to_local(player_position), shifted_box):
-			return (box_direction + 2) % 4
-	else:
-		var start_direction_vector := Constant.direction_to_vector(start_direction)
-		var end_direction_vector := Constant.direction_to_vector(end_direction)
-		var directional_midpoint := start_direction_vector + end_direction_vector
-		var aligned_end := directional_midpoint * Constant.TILE_WIDTH / 2
-		var start_rotation_sign := 1.0
-		if aligned_end.angle_to(start_direction_vector) < 0:
-			start_rotation_sign = -1.0
-		var start_side := aligned_end.rotated(PI/2 * start_rotation_sign)
-		var start_triangle := PackedVector2Array([
-			-aligned_end, aligned_end, aligned_end.rotated(PI/2 * start_rotation_sign)
-		])
-		var end_triangle := Transform2D(PI, Vector2(0, 0)) * start_triangle
-		var shift := Transform2D(0, mid)
-		if Geometry2D.is_point_in_polygon(to_local(player_position), shift * start_triangle):
-			return start_direction
-		if Geometry2D.is_point_in_polygon(to_local(player_position), shift * end_triangle):
-			return end_direction
-	return -1
-
+	
+func is_player_inside(player_position: Vector2) -> bool:
+	var tile_rect = Rect2(global_position, Vector2(Constant.TILE_WIDTH, Constant.TILE_WIDTH))
+	return tile_rect.has_point(player_position)
 
 func _draw() -> void:
 	# draw box

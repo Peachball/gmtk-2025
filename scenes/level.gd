@@ -2,6 +2,7 @@ extends Node2D
 
 var points := 0
 var rolled := true
+var path_direction_flipped := false
 
 enum {
 	SLOT_MACHINE_PREROLL,
@@ -51,6 +52,13 @@ func process_place_tile() -> void:
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
+	
+func _input(event):
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_TAB:
+			path_direction_flipped = !path_direction_flipped
+			queue_redraw()
+
 
 func highlight_path() -> void:
 	var grid_map: Dictionary[Vector2i, Tile] = {}
@@ -62,14 +70,19 @@ func highlight_path() -> void:
 	# Get tile under the player
 	for grid_position in grid_map.keys():
 		var tile := grid_map[grid_position]
-		var entry_direction := tile.calculate_path_direction($WorldMap/Player.global_position)
-		if entry_direction != -1:
-			_traverse_path(grid_map, grid_position, entry_direction)
+		if tile.is_player_inside($WorldMap/Player.global_position):
+			var direction := tile.end_direction if path_direction_flipped else tile.start_direction
+			_traverse_path(grid_map, grid_position, direction)
 			break
+		# var entry_direction := tile.calculate_path_direction($WorldMap/Player.global_position)
+		# if entry_direction != -1:
+			# _traverse_path(grid_map, grid_position, entry_direction)
+			# break
 			
 func _traverse_path(grid_map: Dictionary[Vector2i, Tile], start_pos: Vector2i, entry_direction: int) -> void:
 	var current_pos := start_pos
 	var current_direction := entry_direction
+	var path_length = 0
 
 	while true:
 		var tile: Tile = grid_map.get(current_pos)
@@ -82,12 +95,14 @@ func _traverse_path(grid_map: Dictionary[Vector2i, Tile], start_pos: Vector2i, e
 			break
 			
 		# Set highlights
-		tile.set_highlight_direction(current_direction)
+		if path_length > 0: tile.set_highlight_direction(current_direction)
 		tile.set_highlight_direction(exit_direction)
 
 		# Move to next tile in that direction
 		current_pos += Vector2i(Constant.direction_to_vector(exit_direction))
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry
+		
+		path_length += 1
 
 
 func _on_roll_submit_button_pressed() -> void:
