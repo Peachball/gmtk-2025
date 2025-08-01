@@ -25,6 +25,7 @@ var player_action :int:
 var player_position := Vector2i(0, 0)
 
 func _ready() -> void:
+	$LevelLabel.text = "Level 1"
 	$WorldMap.set_player_position(player_position)
 	player_action = SLOT_MACHINE_PREROLL
 	$SlotMachine.reroll()
@@ -96,10 +97,13 @@ func _on_roll_submit_button_pressed() -> void:
 				new_tile.init_from_directions(casted_tile.start_direction, casted_tile.end_direction)
 				new_tile.position = casted_tile.position
 				new_tile.grid_position = casted_tile.grid_position
+				new_tile.self_modulate.a = 0.5
 				$HeldTiles.add_child(new_tile)
 			player_action = PLACE_TILE
 			rolled = !rolled
 		SLOT_MACHINE_PREROLL:
 			player_action = SLOT_MACHINE_EDIT
-			$SlotMachine.reroll()
+			for n in range(0, 25):
+				await get_tree().create_timer(0.1).timeout
+				$SlotMachine.reroll()
 			rolled = !rolled
