@@ -6,7 +6,6 @@ const MACHINE_WIDTH := 5
 const MACHINE_HEIGHT := 5
 
 @export var tile_scene: PackedScene
-@export var tile_spacing := 5
 
 
 func _ready() -> void:
@@ -20,8 +19,8 @@ func reroll() -> void:
 			tile.init_random_direction()
 			tile.grid_position = Vector2i(col, row)
 			var tile_size := Constant.TILE_WIDTH
-			var pos_x := col * (tile_size + tile_spacing)
-			var pos_y := row * (tile_size + tile_spacing)
+			var pos_x := col * (tile_size)
+			var pos_y := row * (tile_size)
 			
 			tile.position = Vector2(pos_x, pos_y)
 			$Tiles.add_child(tile)

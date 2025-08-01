@@ -37,7 +37,11 @@ func _process(delta: float) -> void:
 
 func process_place_tile() -> void:
 	var mouse_pos = get_viewport().get_mouse_position()
-	$HeldTiles.position = mouse_pos - Vector2((Constant.TILE_WIDTH * $SlotMachine.MACHINE_HEIGHT) / 2, (Constant.TILE_WIDTH * $SlotMachine.MACHINE_WIDTH) / 2)
+	var centered_position: Vector2 = mouse_pos - Vector2((Constant.TILE_WIDTH * $SlotMachine.MACHINE_HEIGHT) / 2, (Constant.TILE_WIDTH * $SlotMachine.MACHINE_WIDTH) / 2)
+	var map_offset: Vector2 = $WorldMap.position
+	$HeldTiles.position = (
+		(centered_position - map_offset).snappedf(Constant.TILE_WIDTH) + map_offset
+	)
 	
 	if Input.is_action_just_pressed("ui_cancel"):
 		clear_held_tiles()
