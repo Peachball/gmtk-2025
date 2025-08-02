@@ -1,6 +1,9 @@
 extends Node2D
 
-var points := 0
+var points: int:
+	set(value):
+		points = value
+		$PointLabel.text = "Points: " + str(value)
 var rolled := true
 var path_direction_flipped := false
 
@@ -70,11 +73,14 @@ func handle_place_tiles() -> void:
 			break
 	if relative_player_grid_position == Constant.NULL_GRID_POSITION:
 		return
-	var result_position := _traverse_path(grid_map, relative_player_grid_position, entry_direction)
+	var traversal_results = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
+	var result_position: Vector2i = traversal_results[0]
+	var path_length: int = traversal_results[1]
 	if result_position == Constant.NULL_GRID_POSITION:
 		return
 	var prev_player_position = $WorldMap.get_player_position()
 	$WorldMap.set_player_position(prev_player_position + result_position - relative_player_grid_position)
+	points += path_length
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
@@ -106,10 +112,11 @@ func _traverse_path(
 		start_pos: Vector2i,
 		entry_direction: int,
 		highlight_tiles: bool = true
-	) -> Vector2i:
+	) -> Array:
 	var current_pos := start_pos
 	var current_direction := entry_direction
 	var path_length = 0
+	var last_traversed_tile := current_pos
 
 	while true:
 		var tile: Tile = grid_map.get(current_pos)
@@ -127,10 +134,11 @@ func _traverse_path(
 			tile.set_highlight_direction(exit_direction)
 
 		# Move to next tile in that direction
+		last_traversed_tile = current_pos
 		current_pos += Vector2i(Constant.direction_to_vector(exit_direction))
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
 		path_length += 1
-	return current_pos
+	return [last_traversed_tile, path_length]
 
 
 func _on_roll_submit_button_pressed() -> void:
