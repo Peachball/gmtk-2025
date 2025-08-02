@@ -1,9 +1,19 @@
 extends Node2D
 
+var point_requirement := 25
+var turn_limit := 10
+
 var points: int:
 	set(value):
 		points = value
-		$PointLabel.text = "Points: " + str(value)
+		$PointLabel.text = "Points: " + str(value) + " / " + str(point_requirement)
+		
+var turns: int:
+	set(value):
+		turns = value
+		$TurnsLabel.text = "Turns: " + str(value)  + " / " + str(turn_limit)
+		
+
 var rolled := true
 var path_direction_flipped := false
 
@@ -25,6 +35,13 @@ var player_action :int:
 			PLACE_TILE:
 				$RollSubmitButton.text = "Roll"
 				$StateLabel.text = "Place the piece!"
+			GAME_END:
+				if points > point_requirement:
+					$PopupPanel/EndingLabel.text = "~YOU WIN~"
+				else: 
+					$PopupPanel/EndingLabel.text = "WOMP WOMP"
+				$PopupPanel.visible = true
+				
 		player_action = new_action
 var start_player_position: Vector2i 
 
@@ -34,6 +51,11 @@ func _ready() -> void:
 	$WorldMap.set_player_position(start_player_position)
 	player_action = SLOT_MACHINE_PREROLL
 	$SlotMachine.reroll()
+	turns = 0
+	$TurnsLabel.text = "Turns: " + str(turns) + " / " + str(turn_limit)
+	points = 0
+	$PointLabel.text = "Points: " + str(points) + " / " + str(point_requirement)
+	$PopupPanel.visible = false
 
 func _process(delta: float) -> void:
 	match player_action:
@@ -85,7 +107,11 @@ func handle_place_tiles() -> void:
 
 	clear_held_tiles()
 	points += path_length
-	player_action = SLOT_MACHINE_PREROLL
+	turns += 1
+	if turns >= turn_limit or points >= point_requirement:
+		player_action = GAME_END
+	else:
+		player_action = SLOT_MACHINE_PREROLL
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
