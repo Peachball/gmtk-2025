@@ -29,4 +29,7 @@ func _draw() -> void:
 
 func set_player_position(position: Vector2i) -> void:
 	$Player.position = Vector2((position.x + 0.5) * Constant.TILE_WIDTH,
-		(level_height - position.y - .5) * Constant.TILE_WIDTH)
+		(position.y + .5) * Constant.TILE_WIDTH)
+		
+func get_player_position() -> Vector2i:
+	return Vector2i(($Player.position / Constant.TILE_WIDTH).floor())
