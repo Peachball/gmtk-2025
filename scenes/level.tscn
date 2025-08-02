@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://hpewmm5q6vx"]
+[gd_scene load_steps=6 format=3 uid="uid://hpewmm5q6vx"]
 
 [ext_resource type="Script" uid="uid://dghhwhugu5ecp" path="res://scenes/level.gd" id="1_2q6dc"]
 [ext_resource type="PackedScene" uid="uid://jjl5ordimcp4" path="res://objects/slot_machine.tscn" id="2_w8frs"]
 [ext_resource type="PackedScene" uid="uid://yuuhuoojdr0t" path="res://objects/world_map.tscn" id="3_mx8sn"]
 [ext_resource type="FontFile" uid="uid://b274shtmu3nu3" path="res://NESCyrillic.ttf" id="4_mx8sn"]
+[ext_resource type="Theme" uid="uid://bj2t2yivp2ovy" path="res://button_theme.tres" id="4_ppgk2"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_2q6dc")
@@ -20,8 +21,8 @@ offset_left = 800.0
 offset_top = 907.0
 offset_right = 1038.0
 offset_bottom = 974.0
-theme_override_fonts/font = ExtResource("4_mx8sn")
-theme_override_font_sizes/font_size = 80
+theme = ExtResource("4_ppgk2")
+theme_override_font_sizes/font_size = 0
 text = "Submit"
 metadata/_edit_lock_ = true
 
