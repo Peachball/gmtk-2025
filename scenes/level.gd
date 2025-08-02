@@ -78,11 +78,9 @@ func handle_place_tiles() -> void:
 	if relative_player_grid_position == Constant.NULL_GRID_POSITION:
 		return
 	var path_history = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
-	var result_position: Vector2i = path_history[-2]
-	if result_position == Constant.NULL_GRID_POSITION:
-		return
+
 	var prev_player_position = $WorldMap.get_player_position()
-	var modified_history = path_history.slice(0, path_history.size() - 1).map(func (p):
+	var modified_history = path_history.map(func (p):
 		return Vector2i(prev_player_position + p - relative_player_grid_position))
 	$WorldMap.move_player_along_path(modified_history as Array[Vector2i])
 
@@ -122,9 +120,11 @@ func _traverse_path(
 	) -> Array:
 	var current_pos := start_pos
 	var current_direction := entry_direction
-	var position_history: Array[Vector2i] = []
+	var position_history: Array[Vector2i] = [current_pos]
+	var seen_positions: Dictionary[Vector2i, bool] = {}
 
 	while true:
+		seen_positions[current_pos] = true
 		var tile: Tile = grid_map.get(current_pos)
 		if tile == null:
 			break
@@ -136,7 +136,7 @@ func _traverse_path(
 			
 		# Set highlights
 		if highlight_tiles:
-			if position_history.size() > 0: tile.set_highlight_direction(current_direction)
+			if position_history.size() > 1: tile.set_highlight_direction(current_direction)
 			tile.set_highlight_direction(exit_direction)
 
 		# Move to next tile in that direction
@@ -144,7 +144,18 @@ func _traverse_path(
 		
 		# make sure new position is valid
 		var new_map_position: Vector2i = current_pos - start_pos + $WorldMap.get_player_position()
+
 		if !$WorldMap.is_position_in_bounds(new_map_position):
+			break
+		if !grid_map.has(current_pos):
+			break
+		if seen_positions.has(current_pos):
+			position_history.append(current_pos)
+			var last_tile: Tile = grid_map.get(current_pos)
+			if highlight_tiles:
+				last_tile.highlight_start = true
+				last_tile.highlight_end = true
+				last_tile.queue_redraw()
 			break
 		position_history.append(current_pos)
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
