@@ -124,7 +124,9 @@ func _on_roll_submit_button_pressed() -> void:
 			rolled = !rolled
 		SLOT_MACHINE_PREROLL:
 			player_action = SLOT_MACHINE_EDIT
-			for n in range(0, 25):
-				await get_tree().create_timer(0.1).timeout
+			$RollSubmitButton.disabled = true
+			for n in range(0, 20):
+				await get_tree().create_timer(0.03).timeout
 				$SlotMachine.reroll()
+			$RollSubmitButton.disabled = false
 			rolled = !rolled
