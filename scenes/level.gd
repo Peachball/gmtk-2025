@@ -83,6 +83,7 @@ func handle_place_tiles() -> void:
 	var prev_player_position = $WorldMap.get_player_position()
 	$WorldMap.set_player_position(prev_player_position + result_position - relative_player_grid_position)
 
+	clear_held_tiles()
 	points += path_length
 	player_action = SLOT_MACHINE_PREROLL
 	
