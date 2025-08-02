@@ -26,11 +26,12 @@ var player_action :int:
 				$RollSubmitButton.text = "Roll"
 				$StateLabel.text = "Place the piece!"
 		player_action = new_action
-var player_position := Vector2i(0, 0)
+var start_player_position: Vector2i 
 
 func _ready() -> void:
 	$LevelLabel.text = "Level 1"
-	$WorldMap.set_player_position(player_position)
+	start_player_position = Vector2i(0, $WorldMap.level_height - 1)
+	$WorldMap.set_player_position(start_player_position)
 	player_action = SLOT_MACHINE_PREROLL
 	$SlotMachine.reroll()
 
