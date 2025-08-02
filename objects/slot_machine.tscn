@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://br6tw46pbrgit" path="res://objects/slot_machine.gd" id="1_q8r2u"]
 [ext_resource type="PackedScene" uid="uid://dbeekhwtd32r0" path="res://objects/tile.tscn" id="2_y5krj"]
-[ext_resource type="FontFile" uid="uid://b274shtmu3nu3" path="res://NESCyrillic.ttf" id="3_omphe"]
+[ext_resource type="Theme" uid="uid://bj2t2yivp2ovy" path="res://Default.tres" id="3_omphe"]
 
 [node name="SlotMachine" type="Node2D"]
 script = ExtResource("1_q8r2u")
@@ -15,7 +15,7 @@ offset_left = -122.0
 offset_top = -146.0
 offset_right = 447.0
 offset_bottom = -72.0
+theme = ExtResource("3_omphe")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_omphe")
 theme_override_font_sizes/font_size = 100
 text = "Path Machine"

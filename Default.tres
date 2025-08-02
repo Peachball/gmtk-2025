@@ -1,15 +1,17 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bj2t2yivp2ovy"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://bj2t2yivp2ovy"]
 
-[ext_resource type="FontFile" uid="uid://b274shtmu3nu3" path="res://NESCyrillic.ttf" id="1_jjpe7"]
-[ext_resource type="Texture2D" uid="uid://d2cjq0o2jb0ik" path="res://ButtonsMap.png" id="2_5nl6s"]
+[ext_resource type="FontFile" uid="uid://b274shtmu3nu3" path="res://NESCyrillic.ttf" id="1_nmhd5"]
+[ext_resource type="Texture2D" uid="uid://d2cjq0o2jb0ik" path="res://ButtonsMap.png" id="2_7ghkt"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x6ffq"]
-texture = ExtResource("2_5nl6s")
+texture = ExtResource("2_7ghkt")
 region_rect = Rect2(126, 18, 16, 16)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jjpe7"]
-texture = ExtResource("2_5nl6s")
+texture = ExtResource("2_7ghkt")
 region_rect = Rect2(126, 0, 16, 16)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_awpbh"]
 
 [resource]
 Button/colors/font_color = Color(0.875, 0.875, 0.875, 1)
@@ -30,9 +32,20 @@ Button/constants/h_separation = 4
 Button/constants/icon_max_width = 0
 Button/constants/outline_size = 0
 Button/font_sizes/font_size = 60
-Button/fonts/font = ExtResource("1_jjpe7")
+Button/fonts/font = ExtResource("1_nmhd5")
 Button/styles/disabled = SubResource("StyleBoxTexture_x6ffq")
 Button/styles/focus = SubResource("StyleBoxTexture_x6ffq")
 Button/styles/hover = SubResource("StyleBoxTexture_jjpe7")
 Button/styles/normal = SubResource("StyleBoxTexture_x6ffq")
 Button/styles/pressed = SubResource("StyleBoxTexture_jjpe7")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/constants/line_spacing = 3
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/constants/shadow_outline_size = 1
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("1_nmhd5")
+Label/styles/normal = SubResource("StyleBoxEmpty_awpbh")
