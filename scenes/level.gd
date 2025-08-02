@@ -80,6 +80,9 @@ func process_place_tile() -> void:
 		handle_place_tiles()
 
 func handle_place_tiles() -> void:
+	if $WorldMap.in_animation:
+		return
+
 	var grid_map: Dictionary[Vector2i, Tile] = {}
 	for child in $HeldTiles.get_children():
 		var tile := child as Tile
@@ -96,22 +99,21 @@ func handle_place_tiles() -> void:
 			break
 	if relative_player_grid_position == Constant.NULL_GRID_POSITION:
 		return
-	var traversal_results = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
-	var result_position: Vector2i = traversal_results[0]
-	var path_length: int = traversal_results[1]
-	var path_history = traversal_results[2]
-	if result_position == Constant.NULL_GRID_POSITION:
-		return
+	var path_history = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
+
 	var prev_player_position = $WorldMap.get_player_position()
-	$WorldMap.set_player_position(prev_player_position + result_position - relative_player_grid_position)
+	var modified_history = path_history.map(func (p):
+		return Vector2i(prev_player_position + p - relative_player_grid_position))
+	$WorldMap.move_player_along_path(modified_history as Array[Vector2i])
 
 	clear_held_tiles()
-	points += path_length
+	points += path_history.size() - 1
 	turns += 1
 	if turns >= turn_limit or points >= point_requirement:
 		player_action = GAME_END
 	else:
 		player_action = SLOT_MACHINE_PREROLL
+	player_action = SLOT_MACHINE_PREROLL
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
@@ -121,7 +123,6 @@ func _input(event):
 		if event.keycode == KEY_TAB:
 			path_direction_flipped = !path_direction_flipped
 			queue_redraw()
-
 
 func highlight_path() -> void:
 	var grid_map: Dictionary[Vector2i, Tile] = {}
@@ -146,11 +147,11 @@ func _traverse_path(
 	) -> Array:
 	var current_pos := start_pos
 	var current_direction := entry_direction
-	var path_length = 0
-	var last_traversed_tile := current_pos
-	var position_history: Array[Vector2i] = []
+	var position_history: Array[Vector2i] = [current_pos]
+	var seen_positions: Dictionary[Vector2i, bool] = {}
 
 	while true:
+		seen_positions[current_pos] = true
 		var tile: Tile = grid_map.get(current_pos)
 		if tile == null:
 			break
@@ -162,21 +163,30 @@ func _traverse_path(
 			
 		# Set highlights
 		if highlight_tiles:
-			if path_length > 0: tile.set_highlight_direction(current_direction)
+			if position_history.size() > 1: tile.set_highlight_direction(current_direction)
 			tile.set_highlight_direction(exit_direction)
 
 		# Move to next tile in that direction
-		last_traversed_tile = current_pos
 		current_pos += Vector2i(Constant.direction_to_vector(exit_direction))
 		
 		# make sure new position is valid
 		var new_map_position: Vector2i = current_pos - start_pos + $WorldMap.get_player_position()
+
 		if !$WorldMap.is_position_in_bounds(new_map_position):
+			break
+		if !grid_map.has(current_pos):
+			break
+		if seen_positions.has(current_pos):
+			position_history.append(current_pos)
+			var last_tile: Tile = grid_map.get(current_pos)
+			if highlight_tiles:
+				last_tile.highlight_start = true
+				last_tile.highlight_end = true
+				last_tile.queue_redraw()
 			break
 		position_history.append(current_pos)
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
-		path_length += 1
-	return [last_traversed_tile, path_length, position_history]
+	return position_history
 
 func _on_roll_submit_button_pressed() -> void:
 	match player_action:
