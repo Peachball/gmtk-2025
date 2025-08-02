@@ -4,6 +4,7 @@ class_name Constant
 
 const TILE_WIDTH := 64.0
 const LINE_THICKNESS := 4.0
+const NULL_GRID_POSITION := Vector2i(-1, -1)
 
 enum Direction { 
 	UP, RIGHT, DOWN, LEFT

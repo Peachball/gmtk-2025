@@ -1,6 +1,9 @@
 extends Node2D
 
-var points := 0
+var points: int:
+	set(value):
+		points = value
+		$PointLabel.text = "Points: " + str(value)
 var rolled := true
 var path_direction_flipped := false
 
@@ -23,11 +26,12 @@ var player_action :int:
 				$RollSubmitButton.text = "Roll"
 				$StateLabel.text = "Place the piece!"
 		player_action = new_action
-var player_position := Vector2i(0, 0)
+var start_player_position: Vector2i 
 
 func _ready() -> void:
 	$LevelLabel.text = "Level 1"
-	$WorldMap.set_player_position(player_position)
+	start_player_position = Vector2i(0, $WorldMap.level_height - 1)
+	$WorldMap.set_player_position(start_player_position)
 	player_action = SLOT_MACHINE_PREROLL
 	$SlotMachine.reroll()
 
@@ -49,6 +53,35 @@ func process_place_tile() -> void:
 		player_action = SLOT_MACHINE_EDIT
 		return
 	highlight_path()
+	
+	if Input.is_action_just_pressed("click"):
+		handle_place_tiles()
+
+func handle_place_tiles() -> void:
+	var grid_map: Dictionary[Vector2i, Tile] = {}
+	for child in $HeldTiles.get_children():
+		var tile := child as Tile
+		grid_map[tile.grid_position] = tile
+	
+	# Get tile under the player
+	var relative_player_grid_position := Constant.NULL_GRID_POSITION
+	var entry_direction := -1
+	for grid_position in grid_map.keys():
+		var tile := grid_map[grid_position]
+		entry_direction = tile.end_direction if path_direction_flipped else tile.start_direction
+		if tile.is_player_inside($WorldMap/Player.global_position):
+			relative_player_grid_position = grid_position
+			break
+	if relative_player_grid_position == Constant.NULL_GRID_POSITION:
+		return
+	var traversal_results = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
+	var result_position: Vector2i = traversal_results[0]
+	var path_length: int = traversal_results[1]
+	if result_position == Constant.NULL_GRID_POSITION:
+		return
+	var prev_player_position = $WorldMap.get_player_position()
+	$WorldMap.set_player_position(prev_player_position + result_position - relative_player_grid_position)
+	points += path_length
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
@@ -74,15 +107,17 @@ func highlight_path() -> void:
 			var direction := tile.end_direction if path_direction_flipped else tile.start_direction
 			_traverse_path(grid_map, grid_position, direction)
 			break
-		# var entry_direction := tile.calculate_path_direction($WorldMap/Player.global_position)
-		# if entry_direction != -1:
-			# _traverse_path(grid_map, grid_position, entry_direction)
-			# break
-			
-func _traverse_path(grid_map: Dictionary[Vector2i, Tile], start_pos: Vector2i, entry_direction: int) -> void:
+
+func _traverse_path(
+		grid_map: Dictionary[Vector2i, Tile],
+		start_pos: Vector2i,
+		entry_direction: int,
+		highlight_tiles: bool = true
+	) -> Array:
 	var current_pos := start_pos
 	var current_direction := entry_direction
 	var path_length = 0
+	var last_traversed_tile := current_pos
 
 	while true:
 		var tile: Tile = grid_map.get(current_pos)
@@ -95,14 +130,16 @@ func _traverse_path(grid_map: Dictionary[Vector2i, Tile], start_pos: Vector2i, e
 			break
 			
 		# Set highlights
-		if path_length > 0: tile.set_highlight_direction(current_direction)
-		tile.set_highlight_direction(exit_direction)
+		if highlight_tiles:
+			if path_length > 0: tile.set_highlight_direction(current_direction)
+			tile.set_highlight_direction(exit_direction)
 
 		# Move to next tile in that direction
+		last_traversed_tile = current_pos
 		current_pos += Vector2i(Constant.direction_to_vector(exit_direction))
-		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry
-		
+		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
 		path_length += 1
+	return [last_traversed_tile, path_length]
 
 
 func _on_roll_submit_button_pressed() -> void:
