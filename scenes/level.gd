@@ -77,11 +77,15 @@ func handle_place_tiles() -> void:
 	var traversal_results = _traverse_path(grid_map, relative_player_grid_position, entry_direction)
 	var result_position: Vector2i = traversal_results[0]
 	var path_length: int = traversal_results[1]
+	var path_history = traversal_results[2]
 	if result_position == Constant.NULL_GRID_POSITION:
 		return
 	var prev_player_position = $WorldMap.get_player_position()
 	$WorldMap.set_player_position(prev_player_position + result_position - relative_player_grid_position)
+
+	clear_held_tiles()
 	points += path_length
+	player_action = SLOT_MACHINE_PREROLL
 	
 func clear_held_tiles():
 	Constant.clear_children($HeldTiles)
@@ -118,6 +122,7 @@ func _traverse_path(
 	var current_direction := entry_direction
 	var path_length = 0
 	var last_traversed_tile := current_pos
+	var position_history: Array[Vector2i] = []
 
 	while true:
 		var tile: Tile = grid_map.get(current_pos)
@@ -137,10 +142,15 @@ func _traverse_path(
 		# Move to next tile in that direction
 		last_traversed_tile = current_pos
 		current_pos += Vector2i(Constant.direction_to_vector(exit_direction))
+		
+		# make sure new position is valid
+		var new_map_position: Vector2i = current_pos - start_pos + $WorldMap.get_player_position()
+		if !$WorldMap.is_position_in_bounds(new_map_position):
+			break
+		position_history.append(current_pos)
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
 		path_length += 1
-	return [last_traversed_tile, path_length]
-
+	return [last_traversed_tile, path_length, position_history]
 
 func _on_roll_submit_button_pressed() -> void:
 	match player_action:

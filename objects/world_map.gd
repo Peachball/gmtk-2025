@@ -4,6 +4,7 @@ extends Node2D
 var level_width := 5
 @export
 var level_height := 5
+var in_animation := false
 
 func _ready() -> void:
 	pass
@@ -30,6 +31,18 @@ func _draw() -> void:
 func set_player_position(position: Vector2i) -> void:
 	$Player.position = Vector2((position.x + 0.5) * Constant.TILE_WIDTH,
 		(position.y + .5) * Constant.TILE_WIDTH)
+
+func move_player_along_path(positions: Array[Vector2i]) -> void:
+	$Player.position = Vector2((positions[-1].x + 0.5) * Constant.TILE_WIDTH,
+		(positions[-1].y + .5) * Constant.TILE_WIDTH)
 		
 func get_player_position() -> Vector2i:
 	return Vector2i(($Player.position / Constant.TILE_WIDTH).floor())
+	
+func is_position_in_bounds(p: Vector2i) -> bool:
+	return (
+		p.x < level_width and
+		p.x >= 0 and
+		p.y < level_height and
+		p.y >= 0
+	)
