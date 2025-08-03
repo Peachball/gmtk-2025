@@ -2,8 +2,8 @@ extends Node2D
 
 class_name SlotMachine
 
-const MACHINE_WIDTH := 5
-const MACHINE_HEIGHT := 5
+var machine_width := 5
+var machine_height := 5
 
 @export var tile_scene: PackedScene
 
@@ -13,8 +13,8 @@ func _ready() -> void:
 	
 func reroll() -> void:
 	Constant.clear_children($Tiles)
-	for row in MACHINE_HEIGHT:
-		for col in MACHINE_WIDTH:
+	for row in machine_height:
+		for col in machine_width:
 			var tile := tile_scene.instantiate() as Tile
 			tile.init_random_direction()
 			tile.grid_position = Vector2i(col, row)
