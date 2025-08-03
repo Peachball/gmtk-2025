@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dghhwhugu5ecp" path="res://scenes/level.gd" id="1_2q6dc"]
 [ext_resource type="PackedScene" uid="uid://jjl5ordimcp4" path="res://objects/slot_machine.tscn" id="2_w8frs"]
 [ext_resource type="PackedScene" uid="uid://yuuhuoojdr0t" path="res://objects/world_map.tscn" id="3_mx8sn"]
-[ext_resource type="Theme" uid="uid://bj2t2yivp2ovy" path="res://Default.tres" id="4_ppgk2"]
+[ext_resource type="Theme" uid="uid://bxwe0udcyhb0q" path="res://Default.tres" id="4_ppgk2"]
 [ext_resource type="Texture2D" uid="uid://bd6n71mtor4vp" path="res://assets/TileMap8.png" id="5_ppgk2"]
 [ext_resource type="AudioStream" uid="uid://bca2l7at6w7hq" path="res://assets/107155__bubaproducer__button-8.wav" id="6_2r41h"]
 [ext_resource type="AudioStream" uid="uid://cvjrgxrteghv8" path="res://assets/118239__pierrecartoons1979__slot-machine-phrygian-[AudioTrimmer.com] (1).mp3" id="7_klq6b"]
@@ -76,7 +76,6 @@ theme_override_font_sizes/font_size = 100
 [node name="PopupPanel" type="PopupPanel" parent="."]
 position = Vector2i(200, 150)
 size = Vector2i(1500, 820)
-visible = true
 theme = ExtResource("4_ppgk2")
 theme_override_styles/panel = SubResource("StyleBoxTexture_2r41h")
 

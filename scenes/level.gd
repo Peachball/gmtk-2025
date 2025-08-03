@@ -3,6 +3,9 @@ extends Node2D
 var point_requirement := 25
 var turn_limit := 10
 
+var point_requirement_levels = [25, 50, 100]
+var turn_limit_levels := [10, 7, 5]
+
 var points: int:
 	set(value):
 		points = value
@@ -13,6 +16,8 @@ var turns: int:
 		turns = value
 		$TurnsLabel.text = "Turns: " + str(value)  + " / " + str(turn_limit)
 		
+var current_level := 1
+var max_level := 3
 
 var rolled := true
 var path_direction_flipped := false
@@ -36,7 +41,7 @@ var player_action :int:
 				$RollSubmitButton.text = "Roll"
 				$StateLabel.text = "Place the piece!"
 			GAME_END:
-				if points > point_requirement:
+				if points >= point_requirement:
 					$PopupPanel/EndingLabel.text = "~YOU WIN~"
 				else: 
 					$PopupPanel/EndingLabel.text = "WOMP WOMP"
@@ -46,7 +51,17 @@ var player_action :int:
 var start_player_position: Vector2i 
 
 func _ready() -> void:
-	$LevelLabel.text = "Level 1"
+	current_level = 0
+	advance_level()
+
+func advance_level() -> void:
+	current_level += 1
+	if current_level > turn_limit_levels.size():
+		player_action = GAME_END
+		return
+
+	turn_limit = turn_limit_levels[current_level-1]
+	point_requirement = point_requirement_levels[current_level-1]
 	start_player_position = Vector2i(0, $WorldMap.level_height - 1)
 	$WorldMap.set_player_position(start_player_position)
 	player_action = SLOT_MACHINE_PREROLL
@@ -55,7 +70,7 @@ func _ready() -> void:
 	$TurnsLabel.text = "Turns: " + str(turns) + " / " + str(turn_limit)
 	points = 0
 	$PointLabel.text = "Points: " + str(points) + " / " + str(point_requirement)
-	$PopupPanel.visible = false
+	$LevelLabel.text = "Level %d" % current_level
 
 func _process(delta: float) -> void:
 	match player_action:
@@ -64,7 +79,7 @@ func _process(delta: float) -> void:
 
 func process_place_tile() -> void:
 	var mouse_pos = get_viewport().get_mouse_position()
-	var centered_position: Vector2 = mouse_pos - Vector2((Constant.TILE_WIDTH * $SlotMachine.MACHINE_HEIGHT) / 2, (Constant.TILE_WIDTH * $SlotMachine.MACHINE_WIDTH) / 2)
+	var centered_position: Vector2 = mouse_pos - Vector2((Constant.TILE_WIDTH * $SlotMachine.machine_height) / 2, (Constant.TILE_WIDTH * $SlotMachine.machine_width) / 2)
 	var map_offset: Vector2 = $WorldMap.position
 	$HeldTiles.position = (
 		(centered_position - map_offset).snappedf(Constant.TILE_WIDTH) + map_offset
@@ -108,12 +123,18 @@ func handle_place_tiles() -> void:
 	$WorldMap.move_player_along_path(modified_history as Array[Vector2i])
 
 	clear_held_tiles()
-	points += path_history.size() - 1
-	turns += 1
-	if turns >= turn_limit or points >= point_requirement:
-		player_action = GAME_END
+	if path_history[-1] == relative_player_grid_position:
+		points += 2 * (path_history.size() - 1)
 	else:
-		player_action = SLOT_MACHINE_PREROLL
+		points += path_history.size() - 1
+	turns += 1
+	
+	if points >= point_requirement:
+		advance_level()
+		return
+	if turns >= turn_limit:
+		player_action = GAME_END
+		return
 	player_action = SLOT_MACHINE_PREROLL
 	
 func clear_held_tiles():
@@ -148,10 +169,19 @@ func _traverse_path(
 	) -> Array:
 	var current_pos := start_pos
 	var current_direction := entry_direction
-	var position_history: Array[Vector2i] = [current_pos]
+	var position_history: Array[Vector2i] = []
 	var seen_positions: Dictionary[Vector2i, bool] = {}
 
 	while true:
+		position_history.append(current_pos)
+		
+		if seen_positions.has(current_pos):
+			var last_tile: Tile = grid_map.get(current_pos)
+			if highlight_tiles:
+				last_tile.highlight_start = true
+				last_tile.highlight_end = true
+				last_tile.queue_redraw()
+			break
 		seen_positions[current_pos] = true
 		var tile: Tile = grid_map.get(current_pos)
 		if tile == null:
@@ -177,15 +207,8 @@ func _traverse_path(
 			break
 		if !grid_map.has(current_pos):
 			break
-		if seen_positions.has(current_pos):
-			position_history.append(current_pos)
-			var last_tile: Tile = grid_map.get(current_pos)
-			if highlight_tiles:
-				last_tile.highlight_start = true
-				last_tile.highlight_end = true
-				last_tile.queue_redraw()
-			break
-		position_history.append(current_pos)
+
+
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
 	return position_history
 
