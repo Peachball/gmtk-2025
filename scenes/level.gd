@@ -42,10 +42,10 @@ var player_action :int:
 				$StateLabel.text = "Place the piece!"
 			GAME_END:
 				if points >= point_requirement:
-					$PopupPanel/EndingLabel.text = "~YOU WIN~"
+					$EndingLabel.text = "~YOU WIN~"
 				else: 
-					$PopupPanel/EndingLabel.text = "WOMP WOMP"
-				$PopupPanel.visible = true
+					$EndingLabel.text = "WOMP WOMP"
+				$EndingLabel.visible = true
 				
 		player_action = new_action
 var start_player_position: Vector2i 
@@ -208,7 +208,6 @@ func _traverse_path(
 		if !grid_map.has(current_pos):
 			break
 
-
 		current_direction = (exit_direction + 2) % 4  # reverse for next tile's entry		
 	return position_history
 
@@ -239,3 +238,6 @@ func _on_roll_submit_button_pressed() -> void:
 				$SlotMachine.reroll()
 			$RollSubmitButton.disabled = false
 			rolled = !rolled
+
+func _on_ending_label_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
