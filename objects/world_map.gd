@@ -36,12 +36,14 @@ func move_player_along_path(positions: Array) -> void:
 	if in_animation:
 		return
 	in_animation = true
+	$PlayerMovingSound.play()
 	var tween := create_tween()
 	for p in positions:
 		tween.tween_property($Player, "position", Vector2((p.x + 0.5) * Constant.TILE_WIDTH,
 			(p.y + .5) * Constant.TILE_WIDTH), 0.2)
 	tween.tween_callback(func ():
-		in_animation = false)
+		in_animation = false
+		$PlayerMovingSound.stop())
 		
 func get_player_position() -> Vector2i:
 	return Vector2i(($Player.position / Constant.TILE_WIDTH).floor())

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://yuuhuoojdr0t"]
+[gd_scene load_steps=5 format=3 uid="uid://yuuhuoojdr0t"]
 
 [ext_resource type="Script" uid="uid://8mo66ww5qs30" path="res://objects/world_map.gd" id="1_byqtc"]
 [ext_resource type="PackedScene" uid="uid://d216s1x61xwa0" path="res://objects/player.tscn" id="2_6gtln"]
 [ext_resource type="Theme" uid="uid://bj2t2yivp2ovy" path="res://Default.tres" id="3_86m30"]
+[ext_resource type="AudioStream" uid="uid://cb6bcbufcqrj8" path="res://assets/501102__evretro__8-bit-footsteps-[AudioTrimmer.com].wav" id="4_we7ej"]
 
 [node name="WorldMap" type="Node2D"]
 script = ExtResource("1_byqtc")
@@ -18,3 +19,6 @@ theme = ExtResource("3_86m30")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 100
 text = "Map"
+
+[node name="PlayerMovingSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_we7ej")

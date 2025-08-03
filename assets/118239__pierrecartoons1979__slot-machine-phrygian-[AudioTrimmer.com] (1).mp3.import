@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cvjrgxrteghv8"
+path="res://.godot/imported/118239__pierrecartoons1979__slot-machine-phrygian-[AudioTrimmer.com] (1).mp3-2e295b1745abf5232fe138f65a2913de.mp3str"
+
+[deps]
+
+source_file="res://assets/118239__pierrecartoons1979__slot-machine-phrygian-[AudioTrimmer.com] (1).mp3"
+dest_files=["res://.godot/imported/118239__pierrecartoons1979__slot-machine-phrygian-[AudioTrimmer.com] (1).mp3-2e295b1745abf5232fe138f65a2913de.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

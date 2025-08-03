@@ -83,6 +83,7 @@ func handle_place_tiles() -> void:
 	if $WorldMap.in_animation:
 		return
 
+	$ConfirmPlayerPathSound.play()
 	var grid_map: Dictionary[Vector2i, Tile] = {}
 	for child in $HeldTiles.get_children():
 		var tile := child as Tile
@@ -189,6 +190,7 @@ func _traverse_path(
 	return position_history
 
 func _on_roll_submit_button_pressed() -> void:
+	$RollSubmitButtonSound.play()
 	match player_action:
 		SLOT_MACHINE_EDIT:
 			var tile_inst = preload("res://objects/tile.tscn")
@@ -208,8 +210,9 @@ func _on_roll_submit_button_pressed() -> void:
 		SLOT_MACHINE_PREROLL:
 			player_action = SLOT_MACHINE_EDIT
 			$RollSubmitButton.disabled = true
+			$SlotRollingSound.play()
 			for n in range(0, 20):
-				await get_tree().create_timer(0.03).timeout
+				await get_tree().create_timer(0.04).timeout
 				$SlotMachine.reroll()
 			$RollSubmitButton.disabled = false
 			rolled = !rolled

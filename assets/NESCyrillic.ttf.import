@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://b274shtmu3nu3"
-path="res://.godot/imported/NESCyrillic.ttf-519ff45c6d52689b3b198c65fefb1120.fontdata"
+path="res://.godot/imported/NESCyrillic.ttf-b4784fb5822575a00d565e167b559bc4.fontdata"
 
 [deps]
 
-source_file="res://NESCyrillic.ttf"
-dest_files=["res://.godot/imported/NESCyrillic.ttf-519ff45c6d52689b3b198c65fefb1120.fontdata"]
+source_file="res://assets/NESCyrillic.ttf"
+dest_files=["res://.godot/imported/NESCyrillic.ttf-b4784fb5822575a00d565e167b559bc4.fontdata"]
 
 [params]
 

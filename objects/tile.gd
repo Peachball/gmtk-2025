@@ -5,9 +5,10 @@ class_name Tile
 var start := Vector2(inset, Constant.TILE_WIDTH / 2)
 var mid := Vector2(Constant.TILE_WIDTH / 2, Constant.TILE_WIDTH / 2)
 var end := Vector2(Constant.TILE_WIDTH - inset, Constant.TILE_WIDTH / 2)
-var line_thickness := 3
+var line_thickness := 5
 var inset := 2
 var allow_rotate := true
+const highlight_color := Color.MEDIUM_AQUAMARINE
 
 var start_direction: int = Constant.Direction.LEFT
 var end_direction: int = Constant.Direction.RIGHT
@@ -75,7 +76,7 @@ func _draw() -> void:
 	var white = Color(1, 1, 1)
 	if out_of_focus:
 		black = Color(0, 0, 0, 0.5)
-		white = Color(1, 1, 1, 0.5)
+		white = Color(1, 1, 1, 0)
 	
 	draw_rect(my_rect, white, true)
 	
@@ -94,12 +95,13 @@ func _draw() -> void:
 func draw_path(a: Vector2, b: Vector2, highlight: bool):
 	var color = Color(0, 0, 0)
 	if highlight:
-		color = Color.YELLOW
-	if out_of_focus:
+		color = highlight_color
+	if out_of_focus and color != highlight_color:
 		color.a = 0.5
 	draw_line(a, b, color, line_thickness)
 	
 func rotate_tile() -> void:
+	$"Tile Rotate Sound".play()
 	allow_rotate = false
 
 	var angle := deg_to_rad(90)
